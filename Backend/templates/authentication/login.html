@@ -1,0 +1,76 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/png" href="/static/vote.png">
+    <title>Login</title>
+</head>
+
+<body>
+    <div class="container">
+        {% for message in messages %}
+        <div class="alert alert-{{message.tags}} alert-light alert-dismissible fade show d-flex align-items-center justify-content-center"
+            role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                class="bi bi-info-circle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Info">
+                <path
+                    d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+            </svg>
+            <div>
+                {{message}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+                aria-hidden="true"></button>
+        </div>
+        {% endfor %}
+        <div id="login-card" class="card text-bg-light mb-3 main-card">
+            <div class="card-header text-bg-success mb-3" style="justify-content: center; padding-bottom: 0%;">
+                <legend class="text-center">Login</legend>
+            </div>
+            <div class="card-body">
+                <form class="form" id="user-login" method="post" action="/login">
+                    {% csrf_token %}
+                    <div class="form-message form-message-error text-center"></div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="username-input-login" name="username" required
+                            autofocus placeholder="Username">
+                        <div class="input-error-message"></div>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" id="user-password-input-login" name="password"
+                            required autofocus placeholder="Password">
+                        <div class="input-error-message"></div>
+                    </div>
+                    <div class="d-grid mx-auto">
+                        <button type="submit" class="btn btn-success">Continue</button>
+                    </div>
+                    <div class="form-links">
+                        <p class="text-center" style="padding: 0px; margin-top: 10px; margin-bottom: 0px;">
+                            <a href="#" class="form-text">Forgot your password?</a>
+                        </p>
+                        <p class="text-center" style="padding: 0px; margin: 0px;">
+                            <a href="/register" id="linkCreateAccount" class="form-text">Don't have an account?
+                                Register.</a>
+                        </p>
+                        <p class="text-center" style="padding: 0px; margin: 0px;">
+                            <a href="/home" id="linkHome" class="form-text">Home page.</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% include 'small-footer.html' %}
+    <script src=""></script>
+</body>
+
+</html>

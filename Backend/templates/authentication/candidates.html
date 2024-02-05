@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="{% static 'script.js' %}"></script>
+    <link rel="icon" type="image/png" href="/static/vote.png">
+    <title>Candidates</title>
+</head>
+
+<body style="padding-top: 170px; display: flex; flex-direction: column; min-height: 100vh; width: 100%;">
+
+    {% if user.is_authenticated %}
+    <nav class="navbar navbar-expand-lg shadow-lg fixed-top" style="background-color: rgb(15, 85, 60);">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white" href="/profile">{{firstName.title}} {{lastName.title}}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav flex-grow-1 pe-3">
+                    <li class="nav-item">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text">Number of votes:</span>
+                            <span class="input-group-text">{{ user.profile.numberOfVotes }}</span>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3 nav-underline">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" aria-current="page" href="/main_page">Main page</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" aria-current="page" href="/profile">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" aria-current="page" href="/user_candidate">Apply</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" aria-current="page" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="d-grid gap-2 justify-content-center" style="padding-bottom: 20px;">
+        {% if profile %}
+        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center justify-content-center gap-2 w-auto"
+            role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                class="bi bi-info-circle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Info">
+                <path
+                    d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+            </svg>
+            You have voted for {{ profile.user.first_name.title }} {{ profile.user.last_name.title }}
+            <button type="button" class="btn-close m-2 m-auto" data-bs-dismiss="alert" aria-label="Close"
+                aria-hidden="true"></button>
+        </div>
+        {% endif %}
+
+
+        <div class="d-grid gap-2">
+            {% if request.user.profile.hasVoted is True %}
+            <a class="btn btn-lg btn-light h-auto d-inline-block " href="/remove_vote" type="submit" role="button"
+                style="width: auto; min-width: 300px">Remove vote</a>
+            {% endif %}
+
+            <a class="btn btn-lg btn-light h-auto d-inline-block " href="/list_candidates" type="submit" role="button"
+                style="width: auto; min-width: 300px">Show candidates</a>
+            <a class="btn btn-lg btn-light h-auto d-inline-block " href="/hide_candidates" type="submit" role="button"
+                style="width: auto; min-width: 300px">Hide candidates</a>
+        </div>
+
+        <div id="main-page-container" class="d-{{display}} gap-2" style="height: auto; width: auto;">
+            <div id="profile-list" class="h-auto">
+                {% if all_candidates %}
+                {% for profile in all_candidates %}
+                <ul class="list-group" style="width: auto;">
+                    <li class="list-group-item list-group-item-success">
+                        <div class="text-start d-inline-block w-auto">
+                            <a href="{% url 'view_profile' profile.user.id %}"
+                                class="link-success link-underline-opacity-0 link-underline-opacity-75-hover link-offset-2">
+                                {{ profile.user.first_name.title }} {{ profile.user.last_name.title }}
+                            </a>
+                        </div>
+                        <a class="btn btn-success btn-sm align-items-center" href="{% url 'vote' profile.user.id %}"
+                            role="button" style="float: right;">
+                            Vote
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-check-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                <path
+                                    d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05" />
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+
+    {% else %}
+    <div class="d-grid gap-2">
+        <button class="btn btn-light btn-lg" type="submit"><a href="/login" class="form-text">Login</a></button>
+        <button class="btn btn-light btn-lg" type="submit"><a href="/register" class="form-text">Register</a></button>
+    </div>
+    {% endif %}
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+html,
+body {
+    --color-primary: rgb(22, 137, 97);
+    --color-primary-dark: rgb(15, 85, 60);
+    --color-secondary: rgb(47, 81, 135);
+    --color-error: rgb(222, 39, 39);
+    --color-success: rgb(67, 176, 67);
+    --border-radius: 5px;
+
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-primary);
+}
+
+
+.main-card {
+    width: 20rem;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+    border-radius: var(--border-radius);
+}
+
+.form-control {
+    background: #e4f7f0;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: var(--color-primary);
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.form-text {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.form-text:hover {
+    text-decoration: underline;
+}
+
+.social-input{
+    height: 50px;
+}
