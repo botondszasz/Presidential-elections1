@@ -4,7 +4,6 @@ from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
-from .models import Profile
 
 def login(request):
     if request.method == 'POST':

@@ -1,9 +1,6 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth import authenticate
-from django.contrib.auth import login as auth_login
-from django.contrib.auth import logout as auth_logout
 from .models import Profile
 
 #Verifies if a user has applied, if not, he can apply
