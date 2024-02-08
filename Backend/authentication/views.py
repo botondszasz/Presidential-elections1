@@ -7,7 +7,7 @@ from django.contrib.auth import logout as auth_logout
 from .models import Profile
 
 def home(request):
-    return render(request, "authentication/index.html")
+    return render(request, "index.html")
 
 def register(request):
     if request.method == "POST":
@@ -52,7 +52,7 @@ def register(request):
 
         return redirect('login') 
 
-    return render(request, "authentication/register.html")
+    return render(request, "register.html")
     
 def login(request):
     if request.method == 'POST':
@@ -68,12 +68,11 @@ def login(request):
         if user is not None:
             auth_login(request, user)
             firstName = user.first_name
-            return render(request, "authentication/main-page.html", {'firstName': firstName})
+            return render(request, "main-page.html", {'firstName': firstName})
         else: 
             messages.error(request, "Incorrect email/password combination")
             return redirect('login')
- 
-    return render(request, "authentication/login.html")
+    return render(request, "login.html")
 
 def logout(request):
     auth_logout(request)
@@ -86,7 +85,7 @@ def update_description(request):
           current_user = request.user
           firstName = current_user.first_name
           lastName = current_user.last_name
-          return render(request, "authentication/update-description.html", {'firstName': firstName, 'lastName': lastName})
+          return render(request, "update-description.html", {'firstName': firstName, 'lastName': lastName})
     else:
           messages.success(request, ("You must be logged in."))
           return redirect('home')    
@@ -104,7 +103,7 @@ def update_profile(request, user_id):
     lastName = current_user.last_name
     current_user.save()
     messages.success(request, "Your update was successfull.")
-    return render(request, "authentication/profile.html", {'firstName': firstName, 'lastName': lastName })
+    return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName })
 
 #Returns the page where users can apply for the elections
 def user_candidate(request):
@@ -112,7 +111,7 @@ def user_candidate(request):
         current_user = request.user
         firstName = current_user.first_name
         lastName = current_user.last_name
-        return render(request, "authentication/user-candidate.html", {'firstName': firstName, 'lastName': lastName })
+        return render(request, "user-candidate.html", {'firstName': firstName, 'lastName': lastName })
 
 #Verifies if a user has applied, if not, he can apply
 def apply(request, user_id):
@@ -124,13 +123,13 @@ def apply(request, user_id):
             current_user.profile.hasApplied = True
             current_user.save()
             messages.success(request, "Congratulations! Your application was successful!")
-            return render(request, "authentication/profile.html", {'firstName': firstName, 'lastName': lastName})
+            return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName})
         else:
             messages.success(request, "You have already applied.")
-            return render(request, "authentication/profile.html", {'firstName': firstName, 'lastName': lastName})
+            return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName})
     else:
         messages.success(request, "You must be logged in.")
-        return render(request, "authentication/profile.html", {'firstName': firstName, 'lastName': lastName})
+        return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName})
 
 #Returns the page where a user can see the candidates and also who has he/she voted for
 def candidates(request):
@@ -138,11 +137,11 @@ def candidates(request):
     firstName = current_user.first_name
     lastName = current_user.last_name
     if current_user.profile.hasVoted is False:
-        return render(request, "authentication/candidates.html", {'firstName': firstName, 'lastName': lastName})
+        return render(request, "candidates.html", {'firstName': firstName, 'lastName': lastName})
     
     search_id = current_user.profile.votedFor
     profile = Profile.objects.get(user_id=search_id)
-    return render(request, "authentication/candidates.html", {'firstName': firstName, 'lastName': lastName, "profile":profile })
+    return render(request, "candidates.html", {'firstName': firstName, 'lastName': lastName, "profile":profile })
 
 #Return the list of candidates
 def list_candidates(request):
@@ -154,9 +153,9 @@ def list_candidates(request):
     if request.user.profile.hasVoted is True:
         search_id = current_user.profile.votedFor
         profile = Profile.objects.get(user_id=search_id)
-        return render(request, "authentication/candidates.html", {"display":display, "profile":profile, "all_candidates":all_candidates, 'firstName': firstName, 'lastName': lastName})
+        return render(request, "candidates.html", {"display":display, "profile":profile, "all_candidates":all_candidates, 'firstName': firstName, 'lastName': lastName})
     else:
-        return render(request, "authentication/candidates.html", {"all_candidates":all_candidates, 'firstName': firstName, 'lastName': lastName})
+        return render(request, "candidates.html", {"all_candidates":all_candidates, 'firstName': firstName, 'lastName': lastName})
 
 #Hide the list of candidates
 def hide_candidates(request):
@@ -164,7 +163,7 @@ def hide_candidates(request):
     firstName = current_user.first_name
     lastName = current_user.last_name
     display = "none"
-    return render(request, "authentication/candidates.html", {"display":display, 'firstName': firstName, 'lastName': lastName})
+    return render(request, "candidates.html", {"display":display, 'firstName': firstName, 'lastName': lastName})
 
 #Lists the leaderboard
 def show_leaderboard(request):
@@ -172,14 +171,14 @@ def show_leaderboard(request):
     current_user = request.user
     firstName = current_user.first_name
     lastName = current_user.last_name
-    return render(request, "authentication/main-page.html", {"all_candidates":all_candidates, 'firstName': firstName, 'lastName': lastName})
+    return render(request, "main-page.html", {"all_candidates":all_candidates, 'firstName': firstName, 'lastName': lastName})
 
 #Redirects to the main page, where the leaderboard is
 def main_page(request):
     current_user = request.user
     firstName = current_user.first_name
     lastName = current_user.last_name
-    return render(request, "authentication/main-page.html", {'firstName': firstName, 'lastName': lastName })
+    return render(request, "main-page.html", {'firstName': firstName, 'lastName': lastName })
 
 #Verifies if a user has applied, in case which he/she can vote
 #Also verifies if he/she has already voted or not
@@ -191,11 +190,11 @@ def vote(request, pk):
         lastName = current_user.last_name
         if request.user.profile.hasApplied is False:
             messages.success(request, "You must be a candidate to vote others.")
-            return render(request, "authentication/profile.html", {'firstName': firstName, 'lastName': lastName })
+            return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName })
         else:
             if request.user.profile.hasVoted is True:
                 messages.success(request, "Sorry. You can vote only once.")
-                return render(request, "authentication/profile.html", {'firstName': firstName, 'lastName': lastName })
+                return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName })
             else:
                 profile = Profile.objects.get(user_id=pk)
                 profile.numberOfVotes += 1
@@ -204,7 +203,7 @@ def vote(request, pk):
                 current_user.profile.hasVoted = True
                 current_user.save()
                 messages.success(request, "You successfully voted.")
-                return render(request, "authentication/profile.html", {'firstName': firstName, 'lastName': lastName })
+                return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName })
     else:
         messages.success(request, "You must be logged in.")
         return redirect('home')
@@ -215,7 +214,7 @@ def profile(request):
           current_user = request.user
           firstName = current_user.first_name
           lastName = current_user.last_name
-          return render(request, "authentication/profile.html", {'firstName': firstName, 'lastName': lastName})
+          return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName})
      else:
           messages.success(request, "You must be logged in.")
           return redirect('home')        
@@ -231,16 +230,16 @@ def view_profile(request, pk):
         lastName = current_user.last_name
 
         if request.user.id == profile.user.id:
-            return render(request, "authentication/profile.html", {'firstName': firstName, 'lastName': lastName })
+            return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName })
 
         if request.user.profile.hasApplied is True:
-            return render(request, "authentication/other-profile.html", {"profile":profile})
+            return render(request, "other-profile.html", {"profile":profile})
         else:
             current_user = request.user
             firstName = current_user.first_name
             lastName = current_user.last_name
             messages.success(request, "You must be a candidate to see other profile.")
-            return render(request, "authentication/profile.html", {'firstName': firstName, 'lastName': lastName })
+            return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName })
     else:
         messages.success(request, "You must be logged in.")
         return redirect('home')
@@ -259,7 +258,7 @@ def remove_vote(request):
         current_user.save()
         profile.save()
         messages.success(request, "You removed your vote.")
-        return render(request, "authentication/profile.html", {'firstName': firstName, 'lastName': lastName })
+        return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName })
     else:
         messages.success(request, "You must be logged in.")
         return redirect('home')
@@ -272,7 +271,13 @@ def remove_application(request):
         current_user = request.user
         firstName = current_user.first_name
         lastName = current_user.last_name
-
+        
+        if current_user.profile.numberOfVotes > 0:
+            current_user.profile.numberOfVotes = 0
+            myVoters = Profile.objects.filter(votedFor=current_user.id).update(hasVoted=False)
+                
+            #remove hasVoted from those who voted for them                
+        
         if current_user.profile.hasVoted is True:
             search_id = current_user.profile.votedFor
             profile = Profile.objects.get(user_id=search_id)
@@ -286,7 +291,7 @@ def remove_application(request):
 
         current_user.save()
         messages.success(request, "You removed your application.")
-        return render(request, "authentication/profile.html", {'firstName': firstName, 'lastName': lastName })
+        return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName })
     else:
         messages.success(request, "You must be logged in.")
         return redirect('home')
@@ -296,7 +301,7 @@ def social(request):
     current_user = request.user
     firstName = current_user.first_name
     lastName = current_user.last_name
-    return render(request, "authentication/social.html", {'firstName': firstName, 'lastName': lastName })
+    return render(request, "social.html", {'firstName': firstName, 'lastName': lastName })
 
 #Saves the changes made by a user regarding social profiles
 def submit_socials(request):
@@ -316,7 +321,7 @@ def submit_socials(request):
             current_user.save()
 
             messages.success(request, "Successfully updated social media links.")
-            return render(request, "authentication/profile.html", {'firstName': firstName, 'lastName': lastName })
+            return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName })
     else:
         messages.success(request, "You must be logged in.")
         return redirect('home')
@@ -327,4 +332,4 @@ def winner(request):
     firstName = current_user.first_name
     lastName = current_user.last_name
     winner = Profile.objects.filter(hasApplied=True).order_by('-numberOfVotes').first()
-    return render(request, "authentication/winner.html",{"winner":winner, 'firstName': firstName, 'lastName': lastName })
+    return render(request, "winner.html",{"winner":winner, 'firstName': firstName, 'lastName': lastName })

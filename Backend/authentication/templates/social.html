@@ -48,7 +48,7 @@
             </div>
         </div>
     </nav>
-    <div class="text-center" style="width: 50%;">
+    <div class="text-center" style="width: 50%; position: absolute; top: 30%;">
         <form method="post" action="submit_socials">
             {% csrf_token %}
             <div class="input-group mb-3 social-input">
@@ -87,6 +87,7 @@
             <button type="submit" class="btn btn-light btn-lg">Submit</button>
         </form>
     </div>
+    {% include 'footer.html' %}
 </body>
 
 </html>

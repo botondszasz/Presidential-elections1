@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 //The developer can set the date when the elections will conclude
-var countDownDate = new Date("Feb 5, 2024 22:00:00").getTime();
+var countDownDate = new Date("Jul 5, 2025 22:00:00").getTime();
 
 var changeTimer = setInterval(function() {
     var now = new Date().getTime();
