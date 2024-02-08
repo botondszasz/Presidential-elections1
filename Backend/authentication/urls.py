@@ -13,7 +13,7 @@ urlpatterns = [
     path('profile', views.profile, name="profile"),
     path('candidates', views.candidates, name="candidates"),
     path("update_profile/<int:user_id>/", user_information.update_profile, name="update_profile"),
-    path('update_description', user_information.update_description, name='update_description'),
+    path('update_description', views.update_description, name='update_description'),
     path('user_candidate', views.user_candidate, name="user_candidate"),
     path("apply/<int:user_id>/", user_actions.apply, name="apply"),
     path('admin/', admin.site.urls),

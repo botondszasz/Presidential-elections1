@@ -105,9 +105,7 @@ def remove_application(request):
         if current_user.profile.numberOfVotes > 0:
             current_user.profile.numberOfVotes = 0
             myVoters = Profile.objects.filter(votedFor=current_user.id).update(hasVoted=False)
-                
-            #remove hasVoted from those who voted for them                
-        
+                        
         if current_user.profile.hasVoted is True:
             search_id = current_user.profile.votedFor
             profile = Profile.objects.get(user_id=search_id)
@@ -126,7 +124,7 @@ def remove_application(request):
         messages.success(request, "You must be logged in.")
         return redirect('home')
     
-    #Saves the changes made by a user regarding social profiles
+#Saves the changes made by a user regarding social profiles
 def submit_socials(request):
     if request.user.is_authenticated:
         current_user = request.user

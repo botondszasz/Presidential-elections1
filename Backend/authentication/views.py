@@ -87,3 +87,14 @@ def winner(request):
     lastName = current_user.last_name
     winner = Profile.objects.filter(hasApplied=True).order_by('-numberOfVotes').first()
     return render(request, "winner.html",{"winner":winner, 'firstName': firstName, 'lastName': lastName })
+
+#Returns the page where users can change their personal information
+def update_description(request):
+    if request.user.is_authenticated:
+          current_user = request.user
+          firstName = current_user.first_name
+          lastName = current_user.last_name
+          return render(request, "update-description.html", {'firstName': firstName, 'lastName': lastName})
+    else:
+          messages.success(request, ("You must be logged in."))
+          return redirect('home')    
