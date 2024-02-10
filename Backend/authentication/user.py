@@ -43,7 +43,7 @@ def register(request):
             messages.error(request, "Email already registered")
             return redirect('login')
         
-        if len(username)>30:
+        if len(username) > 30:
             messages.error(request, "Username must be shorter than 30 characters")
             return redirect('register')
         

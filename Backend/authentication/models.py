@@ -4,7 +4,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.exceptions import ObjectDoesNotExist
 
-#Profile model
+# Profile model
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     user_bio = models.TextField(max_length=500, default="Default description")
@@ -27,6 +27,12 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
+class Event(models.Model):
+    name = models.CharField(max_length=200)
+    date = models.DateTimeField()
+ 
+    def __str__(self):
+        return self.name
      
 
 

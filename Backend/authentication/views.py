@@ -1,11 +1,13 @@
+from datetime import datetime
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from .models import Profile
+from .models import Event
 
 def home(request):
     return render(request, "index.html")
 
-#Returns the page where users can apply for the elections
+# Returns the page where users can apply for the elections
 def user_candidate(request):
     if request.user.is_authenticated:
         current_user = request.user
@@ -13,7 +15,7 @@ def user_candidate(request):
         lastName = current_user.last_name
         return render(request, "user-candidate.html", {'firstName': firstName, 'lastName': lastName })
 
-#Returns the page where a user can see the candidates and also who has he/she voted for
+# Returns the page where a user can see the candidates and also who has he/she voted for
 def candidates(request):
     current_user = request.user
     firstName = current_user.first_name
@@ -25,7 +27,7 @@ def candidates(request):
     profile = Profile.objects.get(user_id=search_id)
     return render(request, "candidates.html", {'firstName': firstName, 'lastName': lastName, "profile":profile })
 
-#Return the list of candidates
+# Return the list of candidates
 def list_candidates(request):
     all_candidates = Profile.objects.filter(hasApplied=True).exclude(user=request.user)
     current_user = request.user
@@ -39,7 +41,7 @@ def list_candidates(request):
     else:
         return render(request, "candidates.html", {"all_candidates":all_candidates, 'firstName': firstName, 'lastName': lastName})
 
-#Hide the list of candidates
+# Hide the list of candidates
 def hide_candidates(request):
     current_user = request.user
     firstName = current_user.first_name
@@ -47,7 +49,7 @@ def hide_candidates(request):
     display = "none"
     return render(request, "candidates.html", {"display":display, 'firstName': firstName, 'lastName': lastName})
 
-#Lists the leaderboard
+# Lists the leaderboard
 def show_leaderboard(request):
     all_candidates = Profile.objects.filter(hasApplied=True).order_by('-numberOfVotes')
     current_user = request.user
@@ -55,32 +57,46 @@ def show_leaderboard(request):
     lastName = current_user.last_name
     return render(request, "main-page.html", {"all_candidates":all_candidates, 'firstName': firstName, 'lastName': lastName})
 
-#Redirects to the main page, where the leaderboard is
+# Redirects to the main page, where the leaderboard is
 def main_page(request):
     current_user = request.user
     firstName = current_user.first_name
     lastName = current_user.last_name
     return render(request, "main-page.html", {'firstName': firstName, 'lastName': lastName })
 
-#Returns a user's profile page 
+# Returns a user's profile page 
 def profile(request):
      if request.user.is_authenticated:
           current_user = request.user
           firstName = current_user.first_name
           lastName = current_user.last_name
-          return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName})
+          
+          event = Event.objects.first()
+          now  = datetime.datetime.now()
+          timeRemaining = event - now
+          seconds = timeRemaining.total_seconds()
+          minutes = seconds / 60
+          hours  = seconds / 3600
+          days = seconds / 86400
+          data = {
+              'days' : days,
+              'hours' : hours,
+              'minutes' : minutes,
+              'seconds' : seconds,
+          }
+          return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName, 'data':data})
      else:
           messages.success(request, "You must be logged in.")
           return redirect('home')        
 
-#Return the page where users can set their social profiles
+# Return the page where users can set their social profiles
 def social(request):
     current_user = request.user
     firstName = current_user.first_name
     lastName = current_user.last_name
     return render(request, "social.html", {'firstName': firstName, 'lastName': lastName })
 
-#Redirects to the page where the winner is displayed
+# Redirects to the page where the winner is displayed
 def winner(request):
     current_user = request.user
     firstName = current_user.first_name
@@ -88,7 +104,7 @@ def winner(request):
     winner = Profile.objects.filter(hasApplied=True).order_by('-numberOfVotes').first()
     return render(request, "winner.html",{"winner":winner, 'firstName': firstName, 'lastName': lastName })
 
-#Returns the page where users can change their personal information
+# Returns the page where users can change their personal information
 def update_description(request):
     if request.user.is_authenticated:
           current_user = request.user

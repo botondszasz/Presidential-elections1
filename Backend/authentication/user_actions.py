@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from .models import Profile
 
-#Verifies if a user has applied, if not, he can apply
+# Verifies if a user has applied, if not, he can apply
 def apply(request, user_id):
     if request.user.is_authenticated:
         current_user = User.objects.get(pk=user_id)
@@ -21,9 +21,9 @@ def apply(request, user_id):
         messages.success(request, "You must be logged in.")
         return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName})
     
-#Verifies if a user has applied, in case which he/she can vote
-#Also verifies if he/she has already voted or not
-#Registers the vote and increases the number of votes for the chosen person
+# Verifies if a user has applied, in case which he/she can vote
+# Also verifies if he/she has already voted or not
+# Registers the vote and increases the number of votes for the chosen person
 def vote(request, pk):
     if request.user.is_authenticated:
         current_user = request.user
@@ -49,9 +49,9 @@ def vote(request, pk):
         messages.success(request, "You must be logged in.")
         return redirect('home')
     
-#Redirects to another user's profile page
-#A user can be redirected to his own profile page
-#If a user is not a candidate, he/she can't see other people's profile page
+# Redirects to another user's profile page
+# A user can be redirected to his own profile page
+# If a user is not a candidate, he/she can't see other people's profile page
 def view_profile(request, pk):
     if request.user.is_authenticated:
         profile = Profile.objects.get(user_id=pk)
@@ -74,7 +74,7 @@ def view_profile(request, pk):
         messages.success(request, "You must be logged in.")
         return redirect('home')
     
-#A user can remove his vote
+# A user can remove his vote
 def remove_vote(request):
     if request.user.is_authenticated:
         current_user = request.user
@@ -93,9 +93,9 @@ def remove_vote(request):
         messages.success(request, "You must be logged in.")
         return redirect('home')
     
-#A user can remove his application
-#This also means that his vote is removed (if he/she voted for somebody)
-#and the person he/she voted for, loses a vote 
+# A user can remove his application
+# This also means that his vote is removed (if he/she voted for somebody)
+# and the person he/she voted for, loses a vote 
 def remove_application(request):
     if request.user.is_authenticated:
         current_user = request.user
@@ -124,7 +124,7 @@ def remove_application(request):
         messages.success(request, "You must be logged in.")
         return redirect('home')
     
-#Saves the changes made by a user regarding social profiles
+# Saves the changes made by a user regarding social profiles
 def submit_socials(request):
     if request.user.is_authenticated:
         current_user = request.user
