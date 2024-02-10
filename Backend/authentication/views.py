@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from .models import Profile
 from .models import Event
+from django.db.models import Q
 
 def home(request):
     return render(request, "index.html")
@@ -74,29 +75,25 @@ def profile(request):
         lastName = current_user.last_name
         now  = timezone.now()
         
-        first_event = Event.objects.filter(event_start_date__date__gte=now).order_by('event_start_date')[:1].get()
+        if(Event.objects.filter(event_end_date__gte=now).order_by('event_start_date')[:1].exists()):
+            first_event = Event.objects.filter(event_end_date__gte=now).order_by('event_start_date')[:1].get()
         
-        # if(not first_event or first_event.event_start_date > now):
-        #     last_event_finished = Event.objects.filter(event_end_date__date__lte=now).order_by('-event_end_date').first()
-        #     if(last_event_finished):
-        #         first_place = Profile.objects.filter(hasApplied=True).order_by('-numberOfVotes').first()
-        #         last_event_finished.winner = first_place.user.get_full_name.title
-        #         condidates = Profile.objects.filter(hasApplied=True).update(numberOfVotes=0)
-        
-        if(not first_event):
-            message = 'There are no voting rounds scheduled.'
-            style = 'h4'
-            vote_display = 'none'
-            return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName, 'message':message, 'style':style, 'vote_display':vote_display})
-        else:
-            if(first_event.event_start_date>now):
+            if(first_event.event_start_date > now):
+                if(Profile.objects.filter(hasApplied=True).exists()):
+                    if(Event.objects.filter(event_end_date__lte=now).order_by('-event_end_date')[:1].exists()):
+                        Profile.objects.filter(hasApplied=True).update(numberOfVotes=0)
+                        Profile.objects.filter(hasApplied=True).update(hasApplied=False)
+                        Profile.objects.filter(hasVoted=True).update(hasVoted=False)
+                        Profile.objects.filter(~Q(votedFor=None)).update(votedFor=None)
                 message = 'There are no voting rounds in progress.'
                 style = 'h4'
                 vote_display = 'none'
                 return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName, 'message':message, 'style':style, 'vote_display':vote_display})
             else:
-                timeDiff = first_event.event_end_date - now
+                timeDiff = first_event.event_end_date - now  
                 timeDiffMS = timeDiff.total_seconds() * 1000
+                
+                    
                 seconds = math.floor((timeDiffMS % (1000 * 60)) / 1000) 
                 minutes = math.floor((timeDiffMS % (1000 * 60 * 60)) / (1000 * 60)) 
                 hours  = math.floor((timeDiffMS % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) 
@@ -108,6 +105,20 @@ def profile(request):
                     'seconds' : seconds,
                 }
                 return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName, 'data':data})
+        else:
+            if(Profile.objects.filter(hasApplied=True).exists()):
+                if(Event.objects.filter(event_end_date__lt=now).exists()):
+                    id = Event.objects.filter(event_end_date__lt=now).order_by('-event_end_date').values('pk')[:1]
+                    Event.objects.filter(pk=id).update(winner=Profile.objects.filter(hasApplied=True).order_by('-numberOfVotes')[:1].get().user.get_full_name)
+                    Profile.objects.filter(hasApplied=True).update(numberOfVotes=0)
+                    Profile.objects.filter(hasApplied=True).update(hasApplied=False)
+                    Profile.objects.filter(hasVoted=True).update(hasVoted=False)
+                    Profile.objects.filter(~Q(votedFor=None)).update(votedFor=None)
+
+                message = 'There are no voting rounds scheduled.'
+                style = 'h4'
+                vote_display = 'none'
+                return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName, 'message':message, 'style':style, 'vote_display':vote_display})
     else:
         messages.success(request, "You must be logged in.")
         return redirect('home')        

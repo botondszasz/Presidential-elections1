@@ -49,7 +49,7 @@
             {% if rounds %}
             {% for round in rounds %}
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">{{ round.name }} : {{ round.winner }}</li>
+                    <li class="list-group-item">{{ round.name }} : {{ round.winner.title }}</li>
                 </ul>
             {% endfor %}
             {% endif %}

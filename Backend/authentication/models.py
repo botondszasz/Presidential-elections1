@@ -29,7 +29,7 @@ def save_user_profile(sender, instance, **kwargs):
 
 class Event(models.Model):
     name = models.CharField(max_length=200)
-    winner = models.TextField(max_length=500, default = ' ', editable=True, blank=True)
+    winner = models.TextField(max_length=500, blank=True)
     event_start_date = models.DateTimeField(default = None, editable = True)
     event_end_date = models.DateTimeField(default = None, editable = True)
     
