@@ -11,8 +11,6 @@
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
     <link href="/static/style.css" rel="stylesheet">
-    <script src="{% static 'script.js' %}" defer></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link rel="icon" type="image/png" href="/static/vote.png">
     <title>Profile</title>
 </head>
@@ -37,8 +35,8 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav justify-content-end flex-grow-1 pe-3 nav-underline">
-                    <li class="nav-item" style="display: none;" id="winner">
-                        <a class="nav-link text-white" aria-current="page" href="/winner">Winner</a>
+                    <li class="nav-item" id="winner">
+                        <a class="nav-link text-white" aria-current="page" href="/winner">Winners</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" aria-current="page" href="/main_page">Main page</a>
@@ -49,7 +47,7 @@
                     <li class="nav-item">
                         <a class="nav-link text-white" aria-current="page" href="/update_description">Update info</a>
                     </li>
-                    <li class="nav-item" id="candidates">
+                    <li class="nav-item d-{{ vote_display }}" id="candidates">
                         <a class="nav-link text-white" aria-current="page" href="/candidates">Candidates</a>
                     </li>
                     <li class="nav-item">
@@ -95,22 +93,28 @@
         <div class="container">
             <div class="row">
                 <div id="timer" class="col text-light d-flex" style="margin-left: 0px; margin-top: 10px; width: 100%;">
+                    {% if data %}
                     <div class="text-center" style="flex-basis: 100px;">
-                        <p id="days" style="font-size: 30px; margin-bottom: -12px;">00</p>
+                        <p id="days" style="font-size: 30px; margin-bottom: -12px;">{{ data.days }}</p>
                         <span class="text-white-50">Days</span>
                     </div>
                     <div class="text-center" style="flex-basis: 100px;">
-                        <p id="hours" style="font-size: 30px; margin-bottom: -12px;">00</p>
+                        <p id="hours" style="font-size: 30px; margin-bottom: -12px;">{{ data.hours }}</p>
                         <span class="text-white-50">Hours</span>
                     </div>
                     <div class="text-center" style="flex-basis: 100px;">
-                        <p id="minutes" style="font-size: 30px; margin-bottom: -12px;">00</p>
+                        <p id="minutes" style="font-size: 30px; margin-bottom: -12px;">{{ data.minutes }}</p>
                         <span class="text-white-50">Minutes</span>
                     </div>
                     <div class="text-center" style="flex-basis: 100px;">
-                        <p id="seconds" style="font-size: 30px; margin-bottom: -12px;">00</p>
+                        <p id="seconds" style="font-size: 30px; margin-bottom: -12px;">{{ data.seconds }}</p>
                         <span class="text-white-50">Seconds</span>
                     </div>
+                    {% else %}
+                        <div class="text-center {{ style }}">
+                            {{ message }}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="col-6 text-center text-light">
                     <p class="display-6 mb-2">Presidential elections</p>
@@ -155,6 +159,59 @@
         <button class="btn btn-light btn-lg" type="submit"><a href="/register" class="form-text">Register</a></button>
     </div>
     {% endif %}
+
+    <script>
+         //Auto-close alerts
+        document.addEventListener("DOMContentLoaded", function () {
+            var element = document.querySelector(".alert");
+            var bootstrap_alert = new bootstrap.Alert(element);
+            const alert_timeout = setTimeout(close_alert, 2500)
+            function close_alert() {
+                bootstrap_alert.close();
+            }
+        });
+
+        function updateCountdown() {
+            let days = document.getElementById('days').textContent;
+            let hours = document.getElementById('hours').textContent;
+            let minutes = document.getElementById('minutes').textContent;
+            let seconds = document.getElementById('seconds').textContent;
+        
+            console.log(days + ' ' + hours + ' ' + minutes + ' ' + seconds)
+        
+            if(seconds > 0) {
+                --seconds;
+            } else {
+                if(minutes > 0) {
+                    --minutes;
+                    seconds = 59;
+                } else {
+                    if(hours > 0) {
+                        --hours;
+                        minutes = 59;
+                        seconds = 59;
+                    } else {
+                        if(days > 0) {
+                            --days;
+                            hours = 23;
+                            minutes = 59;
+                            seconds = 59;
+                        } else {
+                            clearInterval(updateCountdown);
+                            location.reload()
+                        }
+                    }
+                }
+            }
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = (seconds < 10 ? '0' : '') + seconds;
+        
+        }
+        
+        setInterval(updateCountdown, 1000)
+    </script>
 </body>
 
 </html>
