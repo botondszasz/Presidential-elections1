@@ -29,12 +29,11 @@ def save_user_profile(sender, instance, **kwargs):
 
 class Event(models.Model):
     name = models.CharField(max_length=200)
-    end_date = models.DateTimeField(default = None)
-    start_date = models.DateTimeField(default = None)
-    winner = models.TextField(max_length=500, default = '')
+    winner = models.TextField(max_length=500, default = ' ', editable=True, blank=True)
+    event_start_date = models.DateTimeField(default = None, editable = True)
+    event_end_date = models.DateTimeField(default = None, editable = True)
     
     def __str__(self):
         return self.name
-     
 
 

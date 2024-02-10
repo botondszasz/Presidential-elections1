@@ -1,3 +1,4 @@
+from datetime import date
 import math
 from django.utils import timezone
 from django.shortcuts import redirect, render
@@ -72,41 +73,41 @@ def profile(request):
         firstName = current_user.first_name
         lastName = current_user.last_name
         now  = timezone.now()
-        first_event = Event.objects.filter(end_date > now).order_by('start_date').first()
         
-        if(not first_event or first_event.start_date > now):
-            last_event_finished = Event.objects.filter(end_date < now).order_by('-end_date').first()
-            if(last_event_finished):
-                first_place = Profile.objects.filter(hasApplied=True).order_by('-numberOfVotes').first()
-                last_event_finished.winner = first_place.user.get_full_name.title
-                condidates = Profile.objects.filter(hasApplied=True).update(numberOfVotes=0)
+        first_event = Event.objects.filter(event_start_date__date__gte=now).order_by('event_start_date')[:1].get()
+        
+        # if(not first_event or first_event.event_start_date > now):
+        #     last_event_finished = Event.objects.filter(event_end_date__date__lte=now).order_by('-event_end_date').first()
+        #     if(last_event_finished):
+        #         first_place = Profile.objects.filter(hasApplied=True).order_by('-numberOfVotes').first()
+        #         last_event_finished.winner = first_place.user.get_full_name.title
+        #         condidates = Profile.objects.filter(hasApplied=True).update(numberOfVotes=0)
         
         if(not first_event):
             message = 'There are no voting rounds scheduled.'
             style = 'h4'
-            winner_display = 'none'
-            vote_display = 'none'
-            return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName, 'message':message, 'style':style, 'vote_display':vote_display})
-
-        if(first_event.start_date > now):
-            message = 'There are no voting rounds in progress.'
-            style = 'h4'
             vote_display = 'none'
             return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName, 'message':message, 'style':style, 'vote_display':vote_display})
         else:
-            timeDiff = first_event.end_date - now
-            timeDiffMS = timeDiff.total_seconds() * 1000
-            seconds = math.floor((timeDiffMS % (1000 * 60)) / 1000) 
-            minutes = math.floor((timeDiffMS % (1000 * 60 * 60)) / (1000 * 60)) 
-            hours  = math.floor((timeDiffMS % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) 
-            days = math.floor(timeDiffMS / (1000 * 60 * 60 * 24))  
-            data = {
-                'days' : days,
-                'hours' : hours,
-                'minutes' : minutes,
-                'seconds' : seconds,
-            }
-            return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName, 'data':data})
+            if(first_event.event_start_date>now):
+                message = 'There are no voting rounds in progress.'
+                style = 'h4'
+                vote_display = 'none'
+                return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName, 'message':message, 'style':style, 'vote_display':vote_display})
+            else:
+                timeDiff = first_event.event_end_date - now
+                timeDiffMS = timeDiff.total_seconds() * 1000
+                seconds = math.floor((timeDiffMS % (1000 * 60)) / 1000) 
+                minutes = math.floor((timeDiffMS % (1000 * 60 * 60)) / (1000 * 60)) 
+                hours  = math.floor((timeDiffMS % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) 
+                days = math.floor(timeDiffMS / (1000 * 60 * 60 * 24))  
+                data = {
+                    'days' : days,
+                    'hours' : hours,
+                    'minutes' : minutes,
+                    'seconds' : seconds,
+                }
+                return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName, 'data':data})
     else:
         messages.success(request, "You must be logged in.")
         return redirect('home')        
@@ -123,7 +124,7 @@ def winner(request):
     current_user = request.user
     firstName = current_user.first_name
     lastName = current_user.last_name
-    rounds = Event.objects.order_by('-start_date')
+    rounds = Event.objects.order_by('-event_start_date')
     return render(request, "winner.html",{"rounds":rounds, 'firstName': firstName, 'lastName': lastName })
 
 # Returns the page where users can change their personal information

@@ -1,7 +1,6 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth import logout as auth_logout
 
 # Update user personal info
 def update_profile(request, user_id):

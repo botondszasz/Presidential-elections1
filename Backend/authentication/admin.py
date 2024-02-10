@@ -7,8 +7,6 @@ admin.site.unregister(Group)
 
 # Register Event
 admin.site.register(Event)
-
-
 	
 
 
