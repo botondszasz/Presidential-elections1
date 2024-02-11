@@ -16,10 +16,11 @@
     <title>Candidates</title>
 </head>
 
-<body style="padding-top: 170px; display: flex; flex-direction: column; min-height: 100vh; width: 100%;">
+<body style="display: flex; flex-direction: column; min-height: 100vh; width: 100%;">
 
     {% if user.is_authenticated %}
-    <nav class="navbar navbar-expand-lg shadow-lg fixed-top" style="background-color: rgb(15, 85, 60);">
+    <nav class="navbar navbar-expand-lg shadow-lg fixed-top position-absolute"
+        style="background-color: rgb(15, 85, 60);">
         <div class="container-fluid">
             <a class="navbar-brand text-white" href="/profile">{{firstName.title}} {{lastName.title}}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -54,25 +55,23 @@
         </div>
     </nav>
 
-    <div class="d-grid gap-2 justify-content-center" style="padding-bottom: 20px;">
-        {% if profile %}
-        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center justify-content-center gap-2 w-auto"
-            role="alert">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-                class="bi bi-info-circle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Info">
-                <path
-                    d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
-            </svg>
-            You have voted for {{ profile.user.first_name.title }} {{ profile.user.last_name.title }}
-            <button type="button" class="btn-close m-2 m-auto" data-bs-dismiss="alert" aria-label="Close"
-                aria-hidden="true"></button>
-        </div>
-        {% endif %}
-
-
+    <div class="d-grid gap-2 justify-content-center position-absolute" style="padding-top: 50px;padding-bottom: 20px; margin-top: 200px;">
         <div class="d-grid gap-2">
+            {% if profile %}
+            <div class="alert alert-success alert-dismissible fade show d-flex align-items-center justify-content-center"
+                role="alert">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                    class="bi bi-info-circle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Info">
+                    <path
+                        d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+                </svg>
+                You have voted for {{ profile.user.first_name.title }} {{ profile.user.last_name.title }}
+                <button type="button" class="btn-close m-2 m-auto" data-bs-dismiss="alert" aria-label="Close"
+                    aria-hidden="true"></button>
+            </div>
+            {% endif %}
             {% if request.user.profile.hasVoted is True %}
-            <a class="btn btn-lg btn-light h-auto d-inline-block " href="/remove_vote" type="submit" role="button"
+            <a class="btn btn-lg btn-light d-inline-block " href="/remove_vote" type="submit" role="button"
                 style="width: auto; min-width: 300px">Remove vote</a>
             {% endif %}
 
@@ -82,7 +81,7 @@
                 style="width: auto; min-width: 300px">Hide candidates</a>
         </div>
 
-        <div id="main-page-container" class="d-{{display}} gap-2" style="height: auto; width: auto;">
+        <div id="main-page-container" class="d-{{display}} gap-2" style="width: auto;">
             <div id="profile-list" class="h-auto">
                 {% if all_candidates %}
                 {% for profile in all_candidates %}

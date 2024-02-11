@@ -135,7 +135,8 @@ def winner(request):
     current_user = request.user
     firstName = current_user.first_name
     lastName = current_user.last_name
-    rounds = Event.objects.order_by('-event_start_date')
+    now = timezone.now()
+    rounds = Event.objects.filter(event_end_date__lte=now).order_by('-event_start_date')
     return render(request, "winner.html",{"rounds":rounds, 'firstName': firstName, 'lastName': lastName })
 
 # Returns the page where users can change their personal information
