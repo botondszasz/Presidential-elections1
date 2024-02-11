@@ -109,16 +109,16 @@ def profile(request):
             if(Profile.objects.filter(hasApplied=True).exists()):
                 if(Event.objects.filter(event_end_date__lt=now).exists()):
                     id = Event.objects.filter(event_end_date__lt=now).order_by('-event_end_date').values('pk')[:1]
-                    Event.objects.filter(pk=id).update(winner=Profile.objects.filter(hasApplied=True).order_by('-numberOfVotes')[:1].get().user.get_full_name)
+                    Event.objects.filter(pk=id).update(winner = Profile.objects.filter(hasApplied=True).order_by('-numberOfVotes')[:1].get().full_name())
                     Profile.objects.filter(hasApplied=True).update(numberOfVotes=0)
                     Profile.objects.filter(hasApplied=True).update(hasApplied=False)
                     Profile.objects.filter(hasVoted=True).update(hasVoted=False)
                     Profile.objects.filter(~Q(votedFor=None)).update(votedFor=None)
 
-                message = 'There are no voting rounds scheduled.'
-                style = 'h4'
-                vote_display = 'none'
-                return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName, 'message':message, 'style':style, 'vote_display':vote_display})
+            message = 'There are no voting rounds scheduled.'
+            style = 'h4'
+            vote_display = 'none'
+            return render(request, "profile.html", {'firstName': firstName, 'lastName': lastName, 'message':message, 'style':style, 'vote_display':vote_display})
     else:
         messages.success(request, "You must be logged in.")
         return redirect('home')        

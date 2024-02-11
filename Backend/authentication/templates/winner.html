@@ -48,8 +48,11 @@
         <div class="card-body">
             {% if rounds %}
             {% for round in rounds %}
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">{{ round.name }} : {{ round.winner.title }}</li>
+                <ul class="list-group list-group-flush"> 
+                    <li class="list-group-item">
+                        <p class="text-start d-inline-block">{{ round.name }} : </p>
+                        <p class="text-end" style="float: right">{{ round.winner.title }}</p>
+                    </li>
                 </ul>
             {% endfor %}
             {% endif %}
