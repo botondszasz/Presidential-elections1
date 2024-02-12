@@ -18,15 +18,11 @@ body {
     background-color: var(--color-primary);
 }
 
-
 .main-card {
     width: 20rem;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
     border-radius: var(--border-radius);
-    position: absolute;
-    top: 50%;
-    right: 50%;
-    transform: calc(-50%, 50%);
+    margin: 0;
 }
 
 .form-control {
